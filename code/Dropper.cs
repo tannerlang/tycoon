@@ -9,7 +9,7 @@ public sealed class Dropper : Component
 	}
 	protected override void OnUpdate()
 	{
-
+		//spawn items
 	}
 
 

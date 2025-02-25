@@ -758,25 +758,6 @@
           ]
         }
       ]
-    },
-    {
-      "__guid": "88b1a3db-75a8-4674-b46e-9313fa8ea33b",
-      "Flags": 0,
-      "Name": "Dropper",
-      "Position": "71.13098,-132.6951,5.50638",
-      "Enabled": true,
-      "Components": [
-        {
-          "__type": "Dropper",
-          "__guid": "fa02c710-e7a4-4baa-9e04-2208586bc61e",
-          "OnComponentDestroy": null,
-          "OnComponentDisabled": null,
-          "OnComponentEnabled": null,
-          "OnComponentFixedUpdate": null,
-          "OnComponentStart": null,
-          "OnComponentUpdate": null
-        }
-      ]
     }
   ],
   "SceneProperties": {
