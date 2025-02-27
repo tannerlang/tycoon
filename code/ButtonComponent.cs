@@ -6,8 +6,16 @@ using Sandbox;
 public class ButtonComponent : Component, Component.ITriggerListener, Component.ICollisionListener
 {
 
+	
+	[Property] public bool DropperButton { get; set; }  //if true, the button will be used to spawn a Dropper
+	[Property] public bool ConveyorButton { get; set; } //if true, the button will be used to spawn a Conveyor
+	[Property] public bool CashCollectButton { get; set; } //if true, the button will be used to CollectCash
+
+
+
+
 	private ModelRenderer renderer;
-	//get a reference to the player game object and use with the OnTriggerEnter and Exit functions.
+	
 
 	
 
@@ -18,9 +26,15 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 		renderer.Tint = new Color( 0, 1, 0 );
 
 		//create a new dropper game object on the map nearby.
-		SpawnDropper();
-
-
+		if ( DropperButton )
+		{
+			SpawnDropper();
+		}
+		if ( ConveyorButton )
+		{
+			SpawnConveyor();
+		}
+		
 		//destroy button gameobject
 		this.GameObject.Destroy();
 	}
@@ -71,7 +85,45 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 	//function to spawn a converyor
 	private void SpawnConveyor()
 	{
-		
+		//spawn location (subject to change)
+		Vector3 spawnPosition = GameObject.WorldPosition + Vector3.Up * 1 + Vector3.Forward * 100;
+
+		//creating the conveyor gameobject
+		GameObject conveyor = new GameObject();
+		conveyor.WorldPosition = spawnPosition;
+		conveyor.WorldScale = new Vector3(1f, 7f, 0.05f);
+
+		conveyor.Name = "Conveyor";
+
+		//add modelrenderer component
+		var model = conveyor.Components.Create<ModelRenderer>();
+		model.Model = Model.Load( "models/dev/box.vmdl" );
+		model.Tint = new Color( 186, 88, 64 );
+
+		//add a SolidCollider
+		var solidCollider = conveyor.Components.Create<BoxCollider>();
+		solidCollider.IsTrigger = false;      //to detect objects.
+		solidCollider.Scale = new Vector3(50f,50f,50f); //subject to change.
+
+
+		//add a triggerCollider
+		var triggerCollider = conveyor.Components.Create<BoxCollider>();
+		triggerCollider.IsTrigger = true;      //to detect objects.
+		triggerCollider.Scale = new Vector3( 50f, 50f, 200f ); //subject to change.
+		Log.Info( $"Trigger Collider Created: Position={conveyor.WorldPosition}, Scale={triggerCollider.Scale}" );
+
+
+		//create rigid body for gravity and interactions with other objects physics.
+		var rigidBody = conveyor.Components.Create<Rigidbody>();
+		rigidBody.MotionEnabled = false;
+		rigidBody.Gravity = false;
+
+		//attach conveyor component
+		var ConveyorComponent = conveyor.Components.Create<Conveyor>();
+		ConveyorComponent.Speed = 100;
+		ConveyorComponent.Direction = Vector3.Left;				//resets the conveyor default direction to this direction.
+
+		Log.Info( "Conveyor Spawned at {spawnPosition}" );
 	}
 
 	//function to collect cash
