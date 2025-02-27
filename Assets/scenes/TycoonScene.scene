@@ -329,7 +329,8 @@
           "OnComponentEnabled": null,
           "OnComponentFixedUpdate": null,
           "OnComponentStart": null,
-          "OnComponentUpdate": null
+          "OnComponentUpdate": null,
+          "ProcessorButton": false
         },
         {
           "__type": "Sandbox.BoxCollider",
@@ -357,7 +358,7 @@
     {
       "__guid": "d1a5bd84-5552-4039-8c23-54040905bd76",
       "Flags": 0,
-      "Name": "ConveyorButton",
+      "Name": "ConveyorAndProcessorButton",
       "Position": "-71.03594,-63.78431,0.3426664",
       "Scale": "0.9,0.8000019,0.01",
       "Tags": "tycoonloop",
@@ -397,7 +398,8 @@
           "OnComponentEnabled": null,
           "OnComponentFixedUpdate": null,
           "OnComponentStart": null,
-          "OnComponentUpdate": null
+          "OnComponentUpdate": null,
+          "ProcessorButton": true
         },
         {
           "__type": "Sandbox.BoxCollider",

@@ -10,6 +10,7 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 	[Property] public bool DropperButton { get; set; }  //if true, the button will be used to spawn a Dropper
 	[Property] public bool ConveyorButton { get; set; } //if true, the button will be used to spawn a Conveyor
 	[Property] public bool CashCollectButton { get; set; } //if true, the button will be used to CollectCash
+	[Property] public bool ProcessorButton { get; set; } //if true, the button will be used to CollectCash
 
 
 
@@ -34,7 +35,11 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 		{
 			SpawnConveyor();
 		}
-		
+		if (ProcessorButton )
+		{
+			SpawnProcessor();
+		}
+
 		//destroy button gameobject
 		this.GameObject.Destroy();
 	}
@@ -125,6 +130,38 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 
 		Log.Info( "Conveyor Spawned at {spawnPosition}" );
 	}
+
+
+	private void SpawnProcessor()
+	{
+		//spawn location (subject to change) (right now attempt to spawn at end of conveyor
+		Vector3 spawnPosition = GameObject.WorldPosition + Vector3.Up * 25 + Vector3.Forward * 100 + Vector3.Left * 200;
+
+		//create the GameObject
+		GameObject processor = new GameObject();
+		processor.WorldPosition = spawnPosition;
+		processor.WorldScale = new Vector3( 1, 1, 1 );
+		processor.Name = "Processor";
+
+		//add modelrenderer
+		var model = processor.Components.Create<ModelRenderer>();
+		model.Model = Model.Load( "models/dev/box.vmdl" );
+		model.Tint = new Color( 0, 0, 1 );
+
+		//add a trigger collider
+		var triggerCollider = processor.Components.Create<BoxCollider>();
+		triggerCollider.IsTrigger = true;
+		triggerCollider.Scale = new Vector3( 50f, 50f, 50f );
+		//Log.Info( $"Trigger Collider Created: Position = ${processor.WorldPosition}, Scale = ${triggerCollider.Scale}" );
+
+		//attach the ProcessorComponent
+		var ProcessorComponent = processor.Components.Create<Processor>();
+		Log.Info( "Processor Spawned at " + spawnPosition );
+
+
+	}
+
+
 
 	//function to collect cash
 	private void CollectCash()
