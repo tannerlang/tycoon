@@ -9,8 +9,9 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 	
 	[Property] public bool DropperButton { get; set; }  //if true, the button will be used to spawn a Dropper
 	[Property] public bool ConveyorButton { get; set; } //if true, the button will be used to spawn a Conveyor
-	[Property] public bool CashCollectButton { get; set; } //if true, the button will be used to CollectCash
 	[Property] public bool ProcessorButton { get; set; } //if true, the button will be used to CollectCash
+	[Property] public bool CashCollectorButton { get; set; } //if true, the button will be used to CollectCash
+
 
 
 
@@ -35,9 +36,14 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 		{
 			SpawnConveyor();
 		}
-		if (ProcessorButton )
+		if ( ProcessorButton )
 		{
 			SpawnProcessor();
+		}
+		if ( CashCollectorButton )
+		{
+			SpawnCashCollector();
+			SpawnCollectButton();
 		}
 
 		//destroy button gameobject
@@ -164,9 +170,60 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 
 
 	//function to collect cash
-	private void CollectCash()
+	private void SpawnCashCollector()
 	{
+		//set spawn
+		Vector3 spawnPosition = GameObject.WorldPosition +Vector3.Up * 25 +  Vector3.Forward * 25 + Vector3.Left * 200;
 
+		//Create CashCollector Game Object
+		GameObject cashCollector = new GameObject();
+		cashCollector.WorldPosition = spawnPosition;
+		cashCollector.WorldScale = new Vector3( 1f, 1f, 1f );
+		cashCollector.Name = "CashCollector";
+
+
+		//add model renderer
+		var model = cashCollector.Components.Create<ModelRenderer>();
+		model.Model = Model.Load( "models/dev/box.vmdl" );
+		model.Tint = new Color( 1, 0, 1 );
+
+		//add a SolidCollider
+		var solidCollider = cashCollector.Components.Create<BoxCollider>();
+		solidCollider.IsTrigger = false;      //to detect objects.
+		solidCollider.Scale = new Vector3( 50f, 50f, 50f ); //subject to change.
+
+
+		var cashCollectorComponent = cashCollector.Components.Create<CashCollector>();
+
+		Log.Info( "CashCollector Spawned at " + spawnPosition );
+	}
+
+	private void SpawnCollectButton()
+	{
+		//set spawn
+		Vector3 spawnPosition = GameObject.WorldPosition + Vector3.Forward * 25 + Vector3.Left * 150;
+
+		//create gameobject
+		GameObject collectButton = new GameObject();
+		collectButton.WorldPosition = spawnPosition;
+		collectButton.WorldScale = new Vector3( 0.9f, 0.8f, 0.01f );
+		collectButton.Name = "CollectCashButton";
+
+
+		//create model rederer
+		var model = collectButton.Components.Create<ModelRenderer>();
+		model.Model = Model.Load( "models/dev/box.vmdl" );
+		model.Tint = new Color( 0, 1, 0 );  //green
+
+		//trigger collider
+		var buttonCollider = collectButton.Components.Create<BoxCollider>();
+		buttonCollider.IsTrigger = true;
+		buttonCollider.Scale = new Vector3( 50f, 50f, 50f );
+
+		//attach button component
+		var buttonComponent = collectButton.Components.Create<CollectCashComponent>(); 
+
+		Log.Info( "Collect Cash Button Spawned at " + spawnPosition );
 	}
 
 
@@ -176,7 +233,7 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 	{
 		Log.Info( $"Dropper Spawned" );
 	}
-	
 
 	
+
 }

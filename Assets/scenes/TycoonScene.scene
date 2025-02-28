@@ -321,7 +321,7 @@
         {
           "__type": "ButtonComponent",
           "__guid": "74573cc6-1a94-452b-a99c-b28cff83addb",
-          "CashCollectButton": false,
+          "CashCollectorButton": false,
           "ConveyorButton": false,
           "DropperButton": true,
           "OnComponentDestroy": null,
@@ -390,7 +390,7 @@
         {
           "__type": "ButtonComponent",
           "__guid": "59fe6193-4e28-407d-b053-f971afdc2253",
-          "CashCollectButton": false,
+          "CashCollectorButton": true,
           "ConveyorButton": true,
           "DropperButton": false,
           "OnComponentDestroy": null,
@@ -665,87 +665,6 @@
               "SurfaceVelocity": "0,0,0"
             }
           ]
-        }
-      ]
-    },
-    {
-      "__guid": "7059e203-aab6-4af3-9815-c2408b990a46",
-      "Flags": 0,
-      "Name": "testcube",
-      "Position": "33.75451,182.817,12.79882",
-      "Scale": "0.5,0.5,0.5",
-      "Enabled": true,
-      "Components": [
-        {
-          "__type": "Sandbox.ModelRenderer",
-          "__guid": "a19e0ae5-3311-41d6-a4d2-9b4b58cde9d6",
-          "BodyGroups": 18446744073709551615,
-          "CreateAttachments": false,
-          "MaterialGroup": null,
-          "MaterialOverride": null,
-          "Model": "models/dev/box.vmdl",
-          "OnComponentDestroy": null,
-          "OnComponentDisabled": null,
-          "OnComponentEnabled": null,
-          "OnComponentFixedUpdate": null,
-          "OnComponentStart": null,
-          "OnComponentUpdate": null,
-          "RenderOptions": {
-            "GameLayer": true,
-            "OverlayLayer": false,
-            "BloomLayer": false,
-            "AfterUILayer": false
-          },
-          "RenderType": "On",
-          "Tint": "0.08567,0.13961,0.4093,1"
-        },
-        {
-          "__type": "Sandbox.Rigidbody",
-          "__guid": "b7c16ecd-2faa-4087-b35c-2cbc65c303eb",
-          "AngularDamping": 0,
-          "Gravity": true,
-          "LinearDamping": 0,
-          "Locking": {
-            "X": false,
-            "Y": false,
-            "Z": false,
-            "Pitch": false,
-            "Yaw": false,
-            "Roll": false
-          },
-          "MassCenterOverride": "0,0,0",
-          "MassOverride": 0,
-          "MotionEnabled": true,
-          "OnComponentDestroy": null,
-          "OnComponentDisabled": null,
-          "OnComponentEnabled": null,
-          "OnComponentFixedUpdate": null,
-          "OnComponentStart": null,
-          "OnComponentUpdate": null,
-          "OverrideMassCenter": false,
-          "RigidbodyFlags": 0,
-          "StartAsleep": false
-        },
-        {
-          "__type": "Sandbox.BoxCollider",
-          "__guid": "6359b8c4-827b-468e-9159-5ac7d6cd5096",
-          "Center": "0,0,0",
-          "Friction": null,
-          "IsTrigger": false,
-          "OnComponentDestroy": null,
-          "OnComponentDisabled": null,
-          "OnComponentEnabled": null,
-          "OnComponentFixedUpdate": null,
-          "OnComponentStart": null,
-          "OnComponentUpdate": null,
-          "OnObjectTriggerEnter": null,
-          "OnObjectTriggerExit": null,
-          "OnTriggerEnter": null,
-          "OnTriggerExit": null,
-          "Scale": "50,50,50",
-          "Static": false,
-          "Surface": null,
-          "SurfaceVelocity": "0,0,0"
         }
       ]
     }
