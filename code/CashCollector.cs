@@ -13,7 +13,8 @@ public sealed class CashCollector : Component
 	{
 		//create floating WorldText for Unclaimed Cash amount.
 		CashText = new GameObject();
-		CashText.WorldPosition = GameObject.WorldPosition + Vector3.Up * 50f;
+		CashText.WorldPosition = GameObject.WorldPosition + Vector3.Up * 50f + Vector3.Forward * 15;
+
 
 		worldText = CashText.Components.Create<TextRenderer>();
 		worldText.Text = $"Cash: ${unclaimedCash}";

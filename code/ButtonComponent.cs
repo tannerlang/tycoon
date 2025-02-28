@@ -17,7 +17,7 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 
 
 	private ModelRenderer renderer;
-	private Conveyor conveyor;
+	//private Conveyor conveyor;
 
 	
 
@@ -91,6 +91,7 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 		model.Model = Model.Load( "models/dropper.vmdl" );
 		model.Tint= new Color(42,42,42);
 
+		//should encapsulate all collider building in one function.
 		//add a Box Collider
 		var collider = dropper.Components.Create<BoxCollider>();
 		collider.Scale = new Vector3( 25f,25f,25f );
@@ -127,25 +128,40 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 		//creating the conveyor gameobject
 		GameObject conveyor = new GameObject();
 		conveyor.WorldPosition = spawnPosition;
-		conveyor.WorldScale = new Vector3(1f, 7f, 0.05f);
+		conveyor.WorldScale = new Vector3(1f,1f,1f);
+		conveyor.WorldRotation = new Rotation( 0f, -0f, -0.7071068f, 0.7071068f );
 
 		conveyor.Name = "Conveyor";
 
 		//add modelrenderer component
 		var model = conveyor.Components.Create<ModelRenderer>();
-		model.Model = Model.Load( "models/dev/box.vmdl" );
+		model.Model = Model.Load( "models/conveyor.vmdl" );
 		model.Tint = new Color( 186, 88, 64 );
 
+		//should encapsulate all collider building in one function.
 		//add a SolidCollider
 		var solidCollider = conveyor.Components.Create<BoxCollider>();
 		solidCollider.IsTrigger = false;      //to detect objects.
-		solidCollider.Scale = new Vector3(50f,50f,50f); //subject to change.
+		solidCollider.Scale = new Vector3( 325f, 60f, 3f ); //subject to change.
+
+
+		//SolidCollider rails
+		var railCollider = conveyor.Components.Create<BoxCollider>();
+		railCollider.IsTrigger = false;
+		railCollider.Scale = new Vector3( 324f, 5.099964f, 7f );
+		railCollider.Center = new Vector3( 0f, 27.5f, 2.5f );
+
+		//solidCollider railsOpen
+		var OpenRailCollider = conveyor.Components.Create<BoxCollider>();
+		OpenRailCollider.IsTrigger = false;
+		OpenRailCollider.Scale = new Vector3( 274.8989f, 5.099964f, 7f );
+		OpenRailCollider.Center = new Vector3( -25.10003f, -27.5f, 2.5f );
 
 
 		//add a triggerCollider
 		var triggerCollider = conveyor.Components.Create<BoxCollider>();
 		triggerCollider.IsTrigger = true;      //to detect objects.
-		triggerCollider.Scale = new Vector3( 50f, 50f, 200f ); //subject to change.
+		triggerCollider.Scale = new Vector3( 335f, 55f, 15f ); //subject to change.
 		Log.Info( $"Trigger Collider Created: Position={conveyor.WorldPosition}, Scale={triggerCollider.Scale}" );
 
 
@@ -166,23 +182,43 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 	private void SpawnProcessor()
 	{
 		//spawn location (subject to change) (right now attempt to spawn at end of conveyor
-		Vector3 spawnPosition = GameObject.WorldPosition + Vector3.Up * 25 + Vector3.Forward * 100 + Vector3.Left * 200;
+		Vector3 spawnPosition = GameObject.WorldPosition + Vector3.Up * 29 + Vector3.Forward * 100 + Vector3.Left * 175;
 
 		//create the GameObject
 		GameObject processor = new GameObject();
 		processor.WorldPosition = spawnPosition;
-		processor.WorldScale = new Vector3( 1, 1, 1 );
+		processor.WorldScale = new Vector3( 0.5f, 0.5f, 0.5f );
 		processor.Name = "Processor";
 
 		//add modelrenderer
 		var model = processor.Components.Create<ModelRenderer>();
-		model.Model = Model.Load( "models/dev/box.vmdl" );
-		model.Tint = new Color( 0, 0, 1 );
+		model.Model = Model.Load( "models/processor.vmdl" );
+		//model.Tint = new Color( 0, 0, 1 );
+
+		//should encapsulate all collider building in one function.
+		//add a solid colliders
+		var solidTopCollider = processor.Components.Create<BoxCollider>();
+		solidTopCollider.IsTrigger = false;
+		solidTopCollider.Scale = new Vector3( 200, 50f, 50f );
+		solidTopCollider.Center = new Vector3( 0f, 0.0000001937151f, 16.50001f );
+
+		//add solid legCollider
+		var solidLegCollider = processor.Components.Create<BoxCollider>();
+		solidLegCollider.IsTrigger = false;
+		solidLegCollider.Scale = new Vector3( 50f, 50f, 50f );
+		solidLegCollider.Center = new Vector3( 75f, 0f, -33f );
+
+		//add other solid legCollider
+		var otherSolidLegCollider = processor.Components.Create<BoxCollider>();
+		otherSolidLegCollider.IsTrigger = false;
+		otherSolidLegCollider.Scale = new Vector3( 50f, 50f, 50f );
+		otherSolidLegCollider.Center = new Vector3( -75f, 0f, -33f );
 
 		//add a trigger collider
 		var triggerCollider = processor.Components.Create<BoxCollider>();
 		triggerCollider.IsTrigger = true;
-		triggerCollider.Scale = new Vector3( 50f, 50f, 50f );
+		triggerCollider.Scale = new Vector3( 200f, 31f, 117f );
+		triggerCollider.Center = new Vector3( 0f, 17f, 0f );
 		//Log.Info( $"Trigger Collider Created: Position = ${processor.WorldPosition}, Scale = ${triggerCollider.Scale}" );
 
 		//attach the ProcessorComponent
@@ -197,20 +233,22 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 	//function to collect cash
 	private void SpawnCashCollector()
 	{
+		var processor = Scene.GetAllComponents<Processor>().FirstOrDefault();
 		//set spawn
-		Vector3 spawnPosition = GameObject.WorldPosition +Vector3.Up * 25 +  Vector3.Forward * 25 + Vector3.Left * 200;
+		Vector3 spawnPosition = processor.WorldPosition  + Vector3.Down * 20 + Vector3.Backward * 100;
 
 		//Create CashCollector Game Object
 		GameObject cashCollector = new GameObject();
 		cashCollector.WorldPosition = spawnPosition;
 		cashCollector.WorldScale = new Vector3( 1f, 1f, 1f );
+		cashCollector.WorldRotation = new Rotation( -0.7071068f, 0.7071068f, -0.000001739259f, 0.000001739259f );
 		cashCollector.Name = "CashCollector";
 
 
 		//add model renderer
 		var model = cashCollector.Components.Create<ModelRenderer>();
-		model.Model = Model.Load( "models/dev/box.vmdl" );
-		model.Tint = new Color( 1, 0, 1 );
+		model.Model = Model.Load( "models/cashcollector.vmdl" );
+		//model.Tint = new Color( 1, 0, 1 );
 
 		//add a SolidCollider
 		var solidCollider = cashCollector.Components.Create<BoxCollider>();
@@ -225,9 +263,10 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 
 	private void SpawnCollectButton()
 	{
+		var cashCollector = Scene.GetAllComponents<CashCollector>().FirstOrDefault();
 		//set spawn
-		Vector3 spawnPosition = GameObject.WorldPosition + Vector3.Forward * 25 + Vector3.Left * 150;
-
+		//Vector3 spawnPosition = GameObject.WorldPosition + Vector3.Forward * 25 + Vector3.Left * 150;
+		Vector3 spawnPosition = cashCollector.WorldPosition + Vector3.Backward * 50 + Vector3.Down * 9;
 		//create gameobject
 		GameObject collectButton = new GameObject();
 		collectButton.WorldPosition = spawnPosition;
