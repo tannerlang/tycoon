@@ -1,0 +1,22 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits PanelComponent
+@namespace Sandbox
+
+<root>
+	<div class="Cash-ui">
+		<label>Total Cash: $@totalCash</label>
+	</div>
+
+</root>
+
+@code
+{
+	public int totalCash { get; set; } = 0;
+
+	public void UpdateCash(int newCash)
+	{
+		totalCash = newCash;
+		StateHasChanged(); //refreshes ui.
+	}
+}

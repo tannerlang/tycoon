@@ -43,6 +43,14 @@ public sealed class CashCollector : Component
 
 			int collected = processor.ProcessorCollectCash();
 			totalCash += collected;
+
+			//grabs ui component
+			var cashUI = Scene.GetAllComponents<CashUI>().FirstOrDefault();
+			if ( cashUI != null )
+			{
+				cashUI.UpdateCash( totalCash );
+			}
+
 			Log.Info( $"Collected ${collected}. Total Cash: ${totalCash}" );
 		}
 

@@ -667,6 +667,40 @@
           ]
         }
       ]
+    },
+    {
+      "__guid": "f759a315-e451-441a-b175-22d81a34f64c",
+      "Flags": 0,
+      "Name": "Screen",
+      "Position": "36.5013,-13.30222,20.49301",
+      "Enabled": true,
+      "Components": [
+        {
+          "__type": "Sandbox.ScreenPanel",
+          "__guid": "3e4db372-b93f-464b-a874-26dc677305e5",
+          "AutoScreenScale": true,
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "Opacity": 1,
+          "Scale": 1,
+          "ScaleStrategy": "ConsistentHeight",
+          "ZIndex": 100
+        },
+        {
+          "__type": "Sandbox.CashUI",
+          "__guid": "dce28d59-39ed-40e4-bba3-a8a927f1cfe0",
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null
+        }
+      ]
     }
   ],
   "SceneProperties": {
