@@ -38,17 +38,22 @@ namespace Sandbox
 			//Draw Debug for collider
 			if ( DrawDebugLines )
 			{
-				foreach ( var collider in Components.GetAll<BoxCollider>() )
-				{
-					Vector3 center = GameObject.WorldPosition;
-					Vector3 halfSize = collider.Scale * 0.5f * GameObject.WorldScale;
+				SetDebugLines();
 
-					Vector3 mins = center - halfSize;
-					Vector3 maxs = center + halfSize;
+			}
+		}
 
-					Gizmo.Draw.LineBBox(new BBox(mins, maxs));
-				}
+		public void SetDebugLines()
+		{
+			foreach ( var collider in Components.GetAll<BoxCollider>() )
+			{
+				Vector3 center = GameObject.WorldPosition;
+				Vector3 halfSize = collider.Scale * 0.5f * GameObject.WorldScale;
 
+				Vector3 mins = center - halfSize;
+				Vector3 maxs = center + halfSize;
+
+				Gizmo.Draw.LineBBox( new BBox( mins, maxs ) );
 			}
 		}
 

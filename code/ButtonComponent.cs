@@ -17,7 +17,7 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 
 
 	private ModelRenderer renderer;
-	
+	private Conveyor conveyor;
 
 	
 
@@ -73,18 +73,43 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 		//spawn location (subject to change)
 		Vector3 spawnPosition = GameObject.WorldPosition + Vector3.Up * 10 + Vector3.Forward * 100;
 
+		/*spawn location based on the conveyor
+		conveyor = Scene.GetAllComponents<Conveyor>().FirstOrDefault();
+		//Vector3 spawnPositionFromConveyor = conveyor.WorldPosition + Vector3.Up * 10 + Vector3.Forward * 100;
+		*/
+
 		//creating the dropper gameobject
 		GameObject dropper = new GameObject();
 		dropper.WorldPosition = spawnPosition;
+		dropper.WorldScale = new Vector3( 1.5f, 1.5f, 1.5f );
+		dropper.WorldRotation = new Rotation( 0f, 0f, 1f, -0.00000004371139f );
+		//figure out how to rotate dropper in code...
 		dropper.Name = "Dropper";
 
 		//add modelrenderer component
 		var model = dropper.Components.Create<ModelRenderer>();
-		model.Model = Model.Load( "models/dev/box.vmdl" );
+		model.Model = Model.Load( "models/dropper.vmdl" );
+		model.Tint= new Color(42,42,42);
 
 		//add a Box Collider
 		var collider = dropper.Components.Create<BoxCollider>();
-		//collider.SetSize(new Vector3(20,20,20)); //subject to change.
+		collider.Scale = new Vector3( 25f,25f,25f );
+		
+
+		//add a center box collider
+		var centerCollider = dropper.Components.Create<BoxCollider>();
+		centerCollider.Scale = new Vector3( 25f, 25f, 50f );
+		centerCollider.Center = new Vector3( 0f, 0f, 37.5f );
+
+		//add a top collider
+		var topCollider = dropper.Components.Create<BoxCollider>();
+		topCollider.Scale = new Vector3( 30f, 15f, 17f );
+		topCollider.Center = new Vector3( -27f, 0, 53f );
+
+		//add a nozzle collider
+		var nozzleCollider = dropper.Components.Create<BoxCollider>();
+		nozzleCollider.Scale = new Vector3( 18f, 15f, 17f );
+		nozzleCollider.Center = new Vector3( -33f, 0f, 42.5f );
 
 		//attach Dropper component
 		dropper.Components.Create<Dropper>();

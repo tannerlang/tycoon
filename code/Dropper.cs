@@ -4,6 +4,9 @@ public sealed class Dropper : Component
 {
 	[Property] public float DropRate { get; set; } = 2.0f;
 
+	//debug property to visualize the collider
+	[Property] public bool DrawDebugLines { get; set; } = false;
+
 
 	private TimeSince lastDrop = 0;
 
@@ -18,12 +21,19 @@ public sealed class Dropper : Component
 			spawnProduct();
 			lastDrop = 0;
 		}
+
+		//Draw Debug for collider
+		if ( DrawDebugLines )
+		{
+			SetDebugLines();
+
+		}
 	}
 
 	private void spawnProduct()
 	{
 		//Set parameters of the object
-		Vector3 spawnPosition = GameObject.WorldPosition + Vector3.Up * 50 + Vector3.Forward * 75;
+		Vector3 spawnPosition = GameObject.WorldPosition + Vector3.Up * 50 + Vector3.Forward * 50;
 		GameObject product = new GameObject();
 		product.WorldPosition = spawnPosition;
 		product.WorldScale = new Vector3( 0.1f, 0.1f, 0.1f );
@@ -47,4 +57,19 @@ public sealed class Dropper : Component
 		Log.Info( "Product Dropped at {spawnPosition}" );
 	}
 
+	public void SetDebugLines()
+	{
+		foreach ( var collider in Components.GetAll<BoxCollider>() )
+		{
+			Vector3 center = GameObject.WorldPosition;
+			Vector3 halfSize = collider.Scale * 0.5f * GameObject.WorldScale;
+
+			Vector3 mins = center - halfSize;
+			Vector3 maxs = center + halfSize;
+
+			Gizmo.Draw.LineBBox( new BBox( mins, maxs ) );
+		}
+	}
+
 }
+
