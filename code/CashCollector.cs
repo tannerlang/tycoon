@@ -9,16 +9,14 @@ public sealed class CashCollector : Component
 	private GameObject CashText;
 	private TextRenderer worldText;	//Text component for displaying
 
+	protected override void OnUpdate()
+	{
+		RotateText();
+	}
+
 	protected override void OnStart()
 	{
-		//create floating WorldText for Unclaimed Cash amount.
-		CashText = new GameObject();
-		CashText.WorldPosition = GameObject.WorldPosition + Vector3.Up * 50f + Vector3.Forward * 15;
-
-
-		worldText = CashText.Components.Create<TextRenderer>();
-		worldText.Text = $"Cash: ${unclaimedCash}";
-		worldText.FontSize = 25f;
+		CashCollectHoverText();
 	}
 
 
@@ -58,5 +56,63 @@ public sealed class CashCollector : Component
 
 	}
 
+	public int GetCash()
+	{
+		return totalCash;
+	}
+
+	public void SpendCash(int amount)
+	{
+		if ( totalCash >= amount )
+		{
+			totalCash -= amount;
+
+			//update UI
+			var cashUI = Scene.GetAllComponents<CashUI>().FirstOrDefault();
+			if ( cashUI != null )
+			{
+				cashUI.UpdateCash( totalCash );
+			}
+			else
+			{
+				Log.Warning( "CashUI not found in the scene." );
+			}
+			
+			Log.Info($"Spent ${amount}. Remainig cash: {totalCash}");
+		}
+
+		//Log.Warning( "Not enough money." );
+	}
+
+
+	private void CashCollectHoverText()
+	{
+		//create floating WorldText for Unclaimed Cash amount.
+		CashText = new GameObject();
+		CashText.WorldPosition = GameObject.WorldPosition + Vector3.Up * 50f + Vector3.Forward * 15;
+
+
+		worldText = CashText.Components.Create<TextRenderer>();
+		worldText.Text = $"Cash: ${unclaimedCash}";
+		worldText.FontSize = 64f;
+		worldText.Scale = 0.2f;
+		worldText.Color = Color.White;
+		worldText.FontWeight = 800;
+		worldText.BlendMode = BlendMode.Normal;
+	}
+
+	private void RotateText()
+	{
+		//track worldText
+		if ( worldText == null )
+		{
+			return;
+		}
+		var camera = Scene.Camera;
+		if ( camera != null )
+		{
+			worldText.WorldRotation = Rotation.LookAt( worldText.WorldPosition - camera.WorldPosition );
+		}
+	}
 
 }

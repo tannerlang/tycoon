@@ -12,42 +12,81 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 	[Property] public bool ProcessorButton { get; set; } //if true, the button will be used to CollectCash
 	[Property] public bool CashCollectorButton { get; set; } //if true, the button will be used to CollectCash
 
+	//Property for setting the price of a button
+	[Property] public int ButtonPrice { get; set; } = 0;
+
+	//Property for setting the text of a button
+	[Property] public string ButtonText { get; set; }
 
 
 
 
 	private ModelRenderer renderer;
+	private TextRenderer worldText;
+	private GameObject buttonName;
 	//private Conveyor conveyor;
 
-	
 
+	protected override void OnUpdate()
+	{
+		RotateText();
+	
+	}
 
 	public void OnTriggerEnter( Collider other )
 	{
+
 		Log.Info( $"Button Pressed by {other.GameObject.Name}" );
-		renderer.Tint = new Color( 0, 1, 0 );
+		
 
-		//create a new dropper game object on the map nearby.
-		if ( DropperButton )
+		//BuyButtonEvent();
+
+		var cashCollector = Scene.GetAllComponents<CashCollector>().FirstOrDefault();
+
+		if ( ButtonPrice == 0 || cashCollector != null && cashCollector.GetCash() >= ButtonPrice )
 		{
-			SpawnDropper();
+			Log.Info( $"Button Purchased for ${ButtonPrice}" );
+
+			if ( ButtonPrice > 0 )
+			{
+				cashCollector.SpendCash( ButtonPrice );
+			}
+
+
+			//create a new dropper game object on the map nearby.
+			if ( DropperButton ) //&& TotalCash >= ButtonPrice
+			{
+				SpawnDropper();
+			}
+			if ( ConveyorButton )
+			{
+				SpawnConveyor();
+			}
+			if ( ProcessorButton )
+			{
+				SpawnProcessor();
+			}
+			if ( CashCollectorButton )
+			{
+				SpawnCashCollector();
+				SpawnCollectButton();
+			}
+
+
+			if ( buttonName != null )
+			{
+				buttonName.Destroy();
+			}
+
+			//destroy button gameobject
+			this.GameObject.Destroy();
 		}
-		if ( ConveyorButton )
+		else
 		{
-			SpawnConveyor();
-		}
-		if ( ProcessorButton )
-		{
-			SpawnProcessor();
-		}
-		if ( CashCollectorButton )
-		{
-			SpawnCashCollector();
-			SpawnCollectButton();
+			//Log.Warning( "Player does not have enough money." );
+			//ShowWarningText
 		}
 
-		//destroy button gameobject
-		this.GameObject.Destroy();
 	}
 
 	public void OnTriggerExit(Collider other)
@@ -60,12 +99,10 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 	protected override void OnAwake()
 	{
 		renderer = Components.Get<ModelRenderer>();
+		ButtonName();
 
 	}
-	protected override void OnUpdate()
-	{
-		
-	}
+
 
 	//function to spawn a dropper
 	private void SpawnDropper()
@@ -116,6 +153,7 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 		dropper.Components.Create<Dropper>();
 
 		Log.Info( "Dropper Spawned at {spawnPosition}" );
+
 	}
 
 
@@ -295,9 +333,63 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 	//a new area after I buy all of the things in a previous area.
 	private void SpawnButtons()
 	{
-		Log.Info( $"Dropper Spawned" );
+		//Log.Info( $"Dropper Spawned" );
 	}
 
-	
+	private void ButtonName()
+	{
+		//create floating WorldText for Unclaimed Cash amount.
+		buttonName = new GameObject();
+		buttonName.WorldPosition = GameObject.WorldPosition + Vector3.Up * 15f;
 
+		worldText = buttonName.Components.Create<TextRenderer>();
+		worldText.Text = $"{ButtonText}: ${ButtonPrice}";
+		worldText.FontSize = 64f;
+		worldText.Scale = 0.1f;
+		worldText.Color = Color.White;
+		worldText.FontWeight = 800;
+		worldText.BlendMode = BlendMode.Normal;
+
+	}
+
+	private void RotateText()
+	{
+		//track worldText
+		if ( worldText == null)
+		{
+			return;
+		}
+		var camera = Scene.Camera;
+		if ( camera != null )
+		{
+			Rotation lookRotation = Rotation.LookAt( worldText.WorldPosition - camera.WorldPosition );
+
+			worldText.WorldRotation = lookRotation;
+
+		}
+	}
+
+	private void BuyButtonEvent()
+	{
+		var cashCollector = Scene.GetAllComponents<CashCollector>().FirstOrDefault();
+
+		if ( cashCollector == null )
+		{
+			Log.Warning( "No CashCollector Component Found in the scene." );
+			return;
+		}
+		
+
+
+		if ( cashCollector.GetCash() < ButtonPrice )
+		{
+			Log.Warning( "Player does not have enough money." );
+			//showwarning text or play sound
+			return;
+		}
+
+		cashCollector.SpendCash( ButtonPrice );
+
+		Log.Info( $"Button Purchased for ${ButtonPrice}" );
+	}
 }

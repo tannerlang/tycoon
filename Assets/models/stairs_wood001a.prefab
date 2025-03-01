@@ -1,0 +1,39 @@
+{
+  "RootObject": {
+    "__guid": "3e64f3c1-894b-4103-8a4e-069c6afca01d",
+    "Flags": 0,
+    "Name": "stairs_wood001a",
+    "Position": "-78.62143,59.05753,64.00059",
+    "Enabled": true,
+    "Components": [
+      {
+        "__type": "Sandbox.Prop",
+        "__guid": "fb2eed8a-ecb9-4d9e-80ce-f8f8564f4834",
+        "BodyGroups": 18446744073709551615,
+        "Health": 0,
+        "IsStatic": true,
+        "MaterialGroup": null,
+        "Model": "models/props_farm/stairs_wood001a.vmdl",
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "OnPropBreak": null,
+        "OnPropTakeDamage": null,
+        "StartAsleep": false,
+        "Tint": "1,1,1,1"
+      }
+    ]
+  },
+  "ShowInMenu": false,
+  "MenuPath": null,
+  "MenuIcon": null,
+  "DontBreakAsTemplate": false,
+  "ResourceVersion": 1,
+  "__references": [
+    "tfassets.stairs_wood001a#20809"
+  ],
+  "__version": 1
+}
