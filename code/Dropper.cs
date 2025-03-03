@@ -32,8 +32,12 @@ public sealed class Dropper : Component
 
 	private void spawnProduct()
 	{
-		//Set parameters of the object
-		Vector3 spawnPosition = GameObject.WorldPosition + Vector3.Up * 50 + Vector3.Forward * 50;
+		// Define the local position of the nozzle relative to the dropper
+		Vector3 localNozzlePosition = new Vector3( -33f, 0f, 35f );
+
+		// Convert local nozzle position to world position using the dropper's transform
+		Vector3 spawnPosition = GameObject.WorldTransform.ToWorld(new Transform( localNozzlePosition )).Position;
+
 		GameObject product = new GameObject();
 		product.WorldPosition = spawnPosition;
 		product.WorldScale = new Vector3( 0.1f, 0.1f, 0.1f );
@@ -54,7 +58,7 @@ public sealed class Dropper : Component
 		//attach product component
 		product.Components.Create<Product>();
 
-		Log.Info( "Product Dropped at {spawnPosition}" );
+		Log.Info( "Product Dropped at ${spawnPosition}" );
 	}
 
 	public void SetDebugLines()

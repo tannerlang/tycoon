@@ -11,6 +11,14 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 	[Property] public bool ConveyorButton { get; set; } //if true, the button will be used to spawn a Conveyor
 	[Property] public bool ProcessorButton { get; set; } //if true, the button will be used to CollectCash
 	[Property] public bool CashCollectorButton { get; set; } //if true, the button will be used to CollectCash
+	[Property] public GameObject NextButton { get; set; }
+	[Property] public Rotation ConveyorRotation { get; set; } = new Rotation( 0f, -0f, -0.7071068f, 0.7071068f );
+	[Property] public bool UseEditorSetSpawnPos { get; set; } = false;
+	[Property] public Vector3 ConveyorSpawnPos { get; set; } = new Vector3( 0f, 0f, 0f );
+	[Property] public Vector3 ConveyorDirection { get; set; } = new Vector3( 0f, 1f, 0f );
+	[Property] public Rotation DropperRotation { get; set; } = new Rotation( 0f, 0f, 1f, -0.00000004371139f );
+
+
 
 	//Property for setting the price of a button
 	[Property] public int ButtonPrice { get; set; } = 0;
@@ -72,6 +80,18 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 				SpawnCollectButton();
 			}
 
+			//reveal next button
+			if ( NextButton != null )
+			{
+				NextButton.Enabled = true;
+
+				//enable the next buttons text
+				var nextButtonComponent = NextButton.Components.Get<ButtonComponent>();
+				if ( nextButtonComponent != null && nextButtonComponent.buttonName != null )
+				{
+					nextButtonComponent.buttonName.Enabled = true;
+				}
+			}
 
 			if ( buttonName != null )
 			{
@@ -99,7 +119,22 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 	protected override void OnAwake()
 	{
 		renderer = Components.Get<ModelRenderer>();
+
+
 		ButtonName();
+		//hides next button
+		if ( NextButton != null )
+		{
+			NextButton.Enabled = false;
+		}
+
+		//hide buttonName if button is disabled
+		if ( !GameObject.Enabled && buttonName != null )
+		{
+			buttonName.Enabled = false;
+			
+		}
+		
 
 	}
 
@@ -119,8 +154,7 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 		GameObject dropper = new GameObject();
 		dropper.WorldPosition = spawnPosition;
 		dropper.WorldScale = new Vector3( 1.5f, 1.5f, 1.5f );
-		dropper.WorldRotation = new Rotation( 0f, 0f, 1f, -0.00000004371139f );
-		//figure out how to rotate dropper in code...
+		dropper.WorldRotation = DropperRotation;
 		dropper.Name = "Dropper";
 
 		//add modelrenderer component
@@ -163,11 +197,19 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 		//spawn location (subject to change)
 		Vector3 spawnPosition = GameObject.WorldPosition + Vector3.Up * 1 + Vector3.Forward * 100;
 
+		if ( UseEditorSetSpawnPos )
+		{
+			spawnPosition = ConveyorSpawnPos;
+		}
+
+	
 		//creating the conveyor gameobject
 		GameObject conveyor = new GameObject();
+		
 		conveyor.WorldPosition = spawnPosition;
 		conveyor.WorldScale = new Vector3(1f,1f,1f);
-		conveyor.WorldRotation = new Rotation( 0f, -0f, -0.7071068f, 0.7071068f );
+		conveyor.WorldRotation = ConveyorRotation;
+		
 
 		conveyor.Name = "Conveyor";
 
@@ -186,8 +228,8 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 		//SolidCollider rails
 		var railCollider = conveyor.Components.Create<BoxCollider>();
 		railCollider.IsTrigger = false;
-		railCollider.Scale = new Vector3( 324f, 5.099964f, 7f );
-		railCollider.Center = new Vector3( 0f, 27.5f, 2.5f );
+		railCollider.Scale = new Vector3( 274.8989f, 5.099964f, 7f );
+		railCollider.Center = new Vector3( -25.10003f, 27.5f, 2.5f );
 
 		//solidCollider railsOpen
 		var OpenRailCollider = conveyor.Components.Create<BoxCollider>();
@@ -199,19 +241,19 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 		//add a triggerCollider
 		var triggerCollider = conveyor.Components.Create<BoxCollider>();
 		triggerCollider.IsTrigger = true;      //to detect objects.
-		triggerCollider.Scale = new Vector3( 335f, 55f, 15f ); //subject to change.
+		triggerCollider.Scale = new Vector3( 324.9f, 49f, 3f ); //subject to change.
 		Log.Info( $"Trigger Collider Created: Position={conveyor.WorldPosition}, Scale={triggerCollider.Scale}" );
 
 
 		//create rigid body for gravity and interactions with other objects physics.
-		var rigidBody = conveyor.Components.Create<Rigidbody>();
+		/*var rigidBody = conveyor.Components.Create<Rigidbody>();
 		rigidBody.MotionEnabled = false;
-		rigidBody.Gravity = false;
+		rigidBody.Gravity = false;*/
 
 		//attach conveyor component
 		var ConveyorComponent = conveyor.Components.Create<Conveyor>();
 		ConveyorComponent.Speed = 100;
-		ConveyorComponent.Direction = Vector3.Left;				//resets the conveyor default direction to this direction.
+		ConveyorComponent.Direction = ConveyorDirection;				//resets the conveyor default direction to this direction.
 
 		Log.Info( "Conveyor Spawned at {spawnPosition}" );
 	}
@@ -338,7 +380,7 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 
 	private void ButtonName()
 	{
-		//create floating WorldText for Unclaimed Cash amount.
+	
 		buttonName = new GameObject();
 		buttonName.WorldPosition = GameObject.WorldPosition + Vector3.Up * 15f;
 
@@ -350,6 +392,7 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 		worldText.FontWeight = 800;
 		worldText.BlendMode = BlendMode.Normal;
 
+		buttonName.Enabled = GameObject.Enabled;
 	}
 
 	private void RotateText()
