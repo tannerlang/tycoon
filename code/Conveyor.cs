@@ -119,7 +119,7 @@ namespace Sandbox
 
 		async void SmoothTransition( Rigidbody rigidBody, Vector3 initVelocity, Vector3 targetVelocity )
 		{
-			float transitionTime = 20f;
+			float transitionTime = 15f;
 			float elapsedTime = 0f;
 
 

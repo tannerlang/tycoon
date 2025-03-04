@@ -1,4 +1,4 @@
-using Sandbox;
+﻿using Sandbox;
 //include character, dropper, conveyor, and cash collector?
 
 
@@ -24,7 +24,7 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 	[Property] public int ButtonPrice { get; set; } = 0;
 
 	//Property for setting the text of a button
-	[Property] public string ButtonText { get; set; }
+	[Property] public string ButtonText { get; set; } = string.Empty;
 
 
 
@@ -37,6 +37,8 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 
 	protected override void OnUpdate()
 	{
+
+		
 		RotateText();
 	
 	}
@@ -84,7 +86,6 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 			if ( NextButton != null )
 			{
 				NextButton.Enabled = true;
-
 				//enable the next buttons text
 				var nextButtonComponent = NextButton.Components.Get<ButtonComponent>();
 				if ( nextButtonComponent != null && nextButtonComponent.buttonName != null )
@@ -137,6 +138,7 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 		
 
 	}
+
 
 
 	//function to spawn a dropper
@@ -382,6 +384,7 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 	{
 	
 		buttonName = new GameObject();
+		buttonName.SetParent( GameObject );
 		buttonName.WorldPosition = GameObject.WorldPosition + Vector3.Up * 15f;
 
 		worldText = buttonName.Components.Create<TextRenderer>();
@@ -435,4 +438,5 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 
 		Log.Info( $"Button Purchased for ${ButtonPrice}" );
 	}
+
 }
