@@ -11,7 +11,7 @@ namespace Sandbox
 
 		//properties for the editor
 		//Speed and Direction
-		[Property] public float Speed { get; set; } = 100.0f;
+		[Property] public float Speed { get; set; } = 100f;
 		[Property] public Vector3 Direction { get; set; } = Vector3.Left;
 
 		//debug property to visualize the collider

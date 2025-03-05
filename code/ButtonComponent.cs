@@ -13,6 +13,8 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 	[Property] public bool CashCollectorButton { get; set; } //if true, the button will be used to CollectCash
 	[Property] public bool WallButton { get; set; }
 	[Property] public bool StairsButton { get; set; }
+	[Property] public bool FloorButton { get; set; }
+
 
 	[Property] public GameObject NextButton { get; set; }
 	[Property] public bool UseEditorSetSpawnPos { get; set; } = false;
@@ -21,7 +23,6 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 	[Property] public Rotation ConveyorRotation { get; set; } = new Rotation( 0f, -0f, -0.7071068f, 0.7071068f );
 	[Property] public Vector3 ConveyorSpawnPos { get; set; } = new Vector3( 0f, 0f, 0f );
 	[Property] public Vector3 ConveyorDirection { get; set; } = new Vector3( 0f, 1f, 0f );
-
 	//Dropper Properties
 	[Property] public Rotation DropperRotation { get; set; } = new Rotation( 0f, 0f, 1f, -0.00000004371139f );
 	[Property] public Vector3 DropperSpawnPos { get; set; } = new Vector3( 0f, 0f, 0f );
@@ -34,6 +35,11 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 
 	[Property] public Rotation StairsRotation { get; set; } = new Rotation( 0f, 0f, 1f, -0.00000004371139f );
 	[Property] public Vector3 StairsSpawnPos { get; set; } = new Vector3( 0f, 0f, 0f );
+
+	[Property] public Rotation FloorRotation { get; set; } = new Rotation( 0f, 0f, 1f, -0.00000004371139f );
+	[Property] public Vector3 FloorSpawnPos { get; set; } = new Vector3( 0f, 0f, 0f );
+	[Property] public Vector3 FloorScale { get; set; } = new Vector3( 0f, 0f, 0f );
+
 
 
 
@@ -107,6 +113,10 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 			if ( StairsButton )
 			{
 				SpawnStairs();
+			}
+			if ( FloorButton )
+			{
+				SpawnFloor();
 			}
 			//reveal next button
 			if ( NextButton != null )
@@ -409,7 +419,7 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 		Stairs.WorldRotation = StairsRotation;
 
 		var model = Stairs.Components.Create<ModelRenderer>();
-		model.Model = Model.Load( "models/stairs_wood001a.prefab" );
+		model.Model = Model.Load( "models/stairs.vmdl" );
 
 		//trigger collider
 		var modelCollider = Stairs.Components.Create<ModelCollider>();
@@ -434,6 +444,21 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 		}
 		var modelCollider = Wall.Components.Create<ModelCollider>();
 
+	}
+
+	private void SpawnFloor()
+	{
+		GameObject Floor = new GameObject();
+		Floor.WorldPosition = FloorSpawnPos;
+		Floor.WorldRotation = FloorRotation;
+		Floor.WorldScale = FloorScale;
+		Floor.Name = "Floor";
+
+		var model = Floor.Components.Create<ModelRenderer>();
+		model.Model = Model.Load( "models/floor.vmdl" );
+
+		//trigger collider
+		var modelCollider = Floor.Components.Create<ModelCollider>();
 	}
 
 	//do I create a method to spawn more buttons? Can be used when I want to make more buttons visible in 
