@@ -11,12 +11,30 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 	[Property] public bool ConveyorButton { get; set; } //if true, the button will be used to spawn a Conveyor
 	[Property] public bool ProcessorButton { get; set; } //if true, the button will be used to CollectCash
 	[Property] public bool CashCollectorButton { get; set; } //if true, the button will be used to CollectCash
+	[Property] public bool WallButton { get; set; }
+	[Property] public bool StairsButton { get; set; }
+
 	[Property] public GameObject NextButton { get; set; }
-	[Property] public Rotation ConveyorRotation { get; set; } = new Rotation( 0f, -0f, -0.7071068f, 0.7071068f );
 	[Property] public bool UseEditorSetSpawnPos { get; set; } = false;
+
+	//Conveyor Properties
+	[Property] public Rotation ConveyorRotation { get; set; } = new Rotation( 0f, -0f, -0.7071068f, 0.7071068f );
 	[Property] public Vector3 ConveyorSpawnPos { get; set; } = new Vector3( 0f, 0f, 0f );
 	[Property] public Vector3 ConveyorDirection { get; set; } = new Vector3( 0f, 1f, 0f );
+
+	//Dropper Properties
 	[Property] public Rotation DropperRotation { get; set; } = new Rotation( 0f, 0f, 1f, -0.00000004371139f );
+	[Property] public Vector3 DropperSpawnPos { get; set; } = new Vector3( 0f, 0f, 0f );
+
+	[Property] public Rotation WallRotation { get; set; } = new Rotation( 0f, 0f, 1f, -0.00000004371139f );
+	[Property] public Vector3 WallSpawnPos { get; set; } = new Vector3( 0f, 0f, 0f );
+	[Property] public bool WallDoor { get; set; } = false;
+	[Property] public bool WallWindow { get; set; } = false;
+
+
+	[Property] public Rotation StairsRotation { get; set; } = new Rotation( 0f, 0f, 1f, -0.00000004371139f );
+	[Property] public Vector3 StairsSpawnPos { get; set; } = new Vector3( 0f, 0f, 0f );
+
 
 
 
@@ -81,7 +99,15 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 				SpawnCashCollector();
 				SpawnCollectButton();
 			}
+			if ( WallButton )
+			{
+				SpawnWall();
+			}
 
+			if ( StairsButton )
+			{
+				SpawnStairs();
+			}
 			//reveal next button
 			if ( NextButton != null )
 			{
@@ -151,6 +177,10 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 		conveyor = Scene.GetAllComponents<Conveyor>().FirstOrDefault();
 		//Vector3 spawnPositionFromConveyor = conveyor.WorldPosition + Vector3.Up * 10 + Vector3.Forward * 100;
 		*/
+		if ( UseEditorSetSpawnPos )
+		{
+			spawnPosition = DropperSpawnPos;
+		}
 
 		//creating the dropper gameobject
 		GameObject dropper = new GameObject();
@@ -299,7 +329,7 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 		//add a trigger collider
 		var triggerCollider = processor.Components.Create<BoxCollider>();
 		triggerCollider.IsTrigger = true;
-		triggerCollider.Scale = new Vector3( 200f, 31f, 117f );
+		triggerCollider.Scale = new Vector3( 200f, 60f, 117f );
 		triggerCollider.Center = new Vector3( 0f, 17f, 0f );
 		//Log.Info( $"Trigger Collider Created: Position = ${processor.WorldPosition}, Scale = ${triggerCollider.Scale}" );
 
@@ -371,7 +401,40 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 
 		Log.Info( "Collect Cash Button Spawned at " + spawnPosition );
 	}
+	
+	private void SpawnStairs()
+	{
+		GameObject Stairs = new GameObject();
+		Stairs.WorldPosition = StairsSpawnPos;
+		Stairs.WorldRotation = StairsRotation;
 
+		var model = Stairs.Components.Create<ModelRenderer>();
+		model.Model = Model.Load( "models/stairs_wood001a.prefab" );
+
+		//trigger collider
+		var modelCollider = Stairs.Components.Create<ModelCollider>();
+
+	}
+
+	private void SpawnWall()
+	{
+		GameObject Wall = new GameObject();
+		Wall.WorldPosition = WallSpawnPos;
+		Wall.WorldRotation = WallRotation;
+		Wall.Name = "Wall";
+
+		var model = Wall.Components.Create<ModelRenderer>();
+		if ( WallDoor )
+		{
+			model.Model = Model.Load( "models/wall_door.vmdl" );
+		}
+		else if ( WallWindow )
+		{
+			model.Model = Model.Load( "models/wall_windows.vmdl" );
+		}
+		var modelCollider = Wall.Components.Create<ModelCollider>();
+
+	}
 
 	//do I create a method to spawn more buttons? Can be used when I want to make more buttons visible in 
 	//a new area after I buy all of the things in a previous area.
