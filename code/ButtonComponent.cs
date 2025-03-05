@@ -14,6 +14,8 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 	[Property] public bool WallButton { get; set; }
 	[Property] public bool StairsButton { get; set; }
 	[Property] public bool FloorButton { get; set; }
+	[Property] public bool ShuteButton { get; set; }
+	[Property] public bool ConveyorCornerButton { get; set; }
 
 
 	[Property] public GameObject NextButton { get; set; }
@@ -23,6 +25,10 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 	[Property] public Rotation ConveyorRotation { get; set; } = new Rotation( 0f, -0f, -0.7071068f, 0.7071068f );
 	[Property] public Vector3 ConveyorSpawnPos { get; set; } = new Vector3( 0f, 0f, 0f );
 	[Property] public Vector3 ConveyorDirection { get; set; } = new Vector3( 0f, 1f, 0f );
+	[Property] public Vector3 ConveyorScale { get; set; } = new Vector3( 1f, 1f, 1f );
+	[Property] public float ConveyorSpeed { get; set; } = 50f;
+
+
 	//Dropper Properties
 	[Property] public Rotation DropperRotation { get; set; } = new Rotation( 0f, 0f, 1f, -0.00000004371139f );
 	[Property] public Vector3 DropperSpawnPos { get; set; } = new Vector3( 0f, 0f, 0f );
@@ -31,6 +37,7 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 	[Property] public Vector3 WallSpawnPos { get; set; } = new Vector3( 0f, 0f, 0f );
 	[Property] public bool WallDoor { get; set; } = false;
 	[Property] public bool WallWindow { get; set; } = false;
+	[Property] public bool Roof { get; set; } = false;
 
 
 	[Property] public Rotation StairsRotation { get; set; } = new Rotation( 0f, 0f, 1f, -0.00000004371139f );
@@ -40,6 +47,13 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 	[Property] public Vector3 FloorSpawnPos { get; set; } = new Vector3( 0f, 0f, 0f );
 	[Property] public Vector3 FloorScale { get; set; } = new Vector3( 0f, 0f, 0f );
 
+	[Property] public Rotation ShuteRotation { get; set; } = new Rotation( 0f, 0f, 1f, -0.00000004371139f );
+	[Property] public Vector3 ShuteSpawnPos { get; set; } = new Vector3( 0f, 0f, 0f );
+	[Property] public Vector3 ShuteScale { get; set; } = new Vector3( 1f, 1f, 1f );
+
+	[Property] public Rotation ConveyorCornerRotation { get; set; } = new Rotation( 0f, 0f, 1f, -0.00000004371139f );
+	[Property] public Vector3 ConveyorCornerSpawnPos { get; set; } = new Vector3( 0f, 0f, 0f );
+	//[Property] public Vector3 ConveyorCornerScale { get; set; } = new Vector3( 1f, 1f, 1f );
 
 
 
@@ -117,6 +131,14 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 			if ( FloorButton )
 			{
 				SpawnFloor();
+			}
+			if ( ShuteButton )
+			{
+				SpawnShute();
+			}
+			if ( ConveyorCornerButton )
+			{
+				SpawnConveyorCorner();
 			}
 			//reveal next button
 			if ( NextButton != null )
@@ -202,7 +224,7 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 		//add modelrenderer component
 		var model = dropper.Components.Create<ModelRenderer>();
 		model.Model = Model.Load( "models/dropper.vmdl" );
-		model.Tint= new Color(42,42,42);
+		model.Tint= new Color( 0.36f, 0.06f, 0.06f );
 
 		//should encapsulate all collider building in one function.
 		//add a Box Collider
@@ -249,7 +271,7 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 		GameObject conveyor = new GameObject();
 		
 		conveyor.WorldPosition = spawnPosition;
-		conveyor.WorldScale = new Vector3(1f,1f,1f);
+		conveyor.WorldScale = ConveyorScale;
 		conveyor.WorldRotation = ConveyorRotation;
 		
 
@@ -259,6 +281,7 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 		var model = conveyor.Components.Create<ModelRenderer>();
 		model.Model = Model.Load( "models/conveyor.vmdl" );
 		model.Tint = new Color( 186, 88, 64 );
+		
 
 		//should encapsulate all collider building in one function.
 		//add a SolidCollider
@@ -294,7 +317,7 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 
 		//attach conveyor component
 		var ConveyorComponent = conveyor.Components.Create<Conveyor>();
-		ConveyorComponent.Speed = 100;
+		ConveyorComponent.Speed = ConveyorSpeed;
 		ConveyorComponent.Direction = ConveyorDirection;				//resets the conveyor default direction to this direction.
 
 		Log.Info( "Conveyor Spawned at {spawnPosition}" );
@@ -442,8 +465,33 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 		{
 			model.Model = Model.Load( "models/wall_windows.vmdl" );
 		}
+		//model.MaterialOverride = Material.Load( "materials/wall_brick_c.vmat_c" );
 		var modelCollider = Wall.Components.Create<ModelCollider>();
 
+	}
+
+	private void SpawnShute()
+	{
+		GameObject Shute = new GameObject();
+		Shute.WorldPosition = ShuteSpawnPos;
+		Shute.WorldRotation = ShuteRotation;
+		Shute.WorldScale = ShuteScale;
+
+		var model = Shute.Components.Create<ModelRenderer>();
+		model.Model = Model.Load( "models/shute.vmdl" );
+		var modelCollider = Shute.Components.Create<ModelCollider>();
+	}
+
+	private void SpawnConveyorCorner()
+	{
+		GameObject CCorner = new GameObject();
+		CCorner.WorldPosition = ConveyorCornerSpawnPos;
+		CCorner.WorldRotation = ConveyorCornerRotation;
+		CCorner.WorldScale = new Vector3(1f,1f,1f);
+
+		var model = CCorner.Components.Create<ModelRenderer>();
+		model.Model = Model.Load( "models/conveyorcorner.vmdl" );
+		var modelCollider = CCorner.Components.Create<ModelCollider>();
 	}
 
 	private void SpawnFloor()
@@ -455,7 +503,16 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 		Floor.Name = "Floor";
 
 		var model = Floor.Components.Create<ModelRenderer>();
-		model.Model = Model.Load( "models/floor.vmdl" );
+		if ( Roof )
+		{
+			
+			model.Model = Model.Load( "models/roof.vmdl" );
+		}
+		else
+		{
+			model.Model = Model.Load( "models/floor.vmdl" );
+		}
+		
 
 		//trigger collider
 		var modelCollider = Floor.Components.Create<ModelCollider>();

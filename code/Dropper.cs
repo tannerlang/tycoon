@@ -2,7 +2,7 @@ using Sandbox;
 
 public sealed class Dropper : Component
 {
-	[Property] public float DropRate { get; set; } = 2.0f;
+	[Property] public float DropRate { get; set; } = 4f;
 
 	//debug property to visualize the collider
 	[Property] public bool DrawDebugLines { get; set; } = false;

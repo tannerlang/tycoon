@@ -11,7 +11,7 @@ namespace Sandbox
 
 		//properties for the editor
 		//Speed and Direction
-		[Property] public float Speed { get; set; } = 100f;
+		[Property] public float Speed { get; set; } = 50f;
 		[Property] public Vector3 Direction { get; set; } = Vector3.Left;
 
 		//debug property to visualize the collider
@@ -119,7 +119,7 @@ namespace Sandbox
 
 		async void SmoothTransition( Rigidbody rigidBody, Vector3 initVelocity, Vector3 targetVelocity )
 		{
-			float transitionTime = 15f;
+			float transitionTime = 10f;
 			float elapsedTime = 0f;
 
 
