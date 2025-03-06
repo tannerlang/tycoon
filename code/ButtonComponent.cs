@@ -5,8 +5,9 @@
 
 public class ButtonComponent : Component, Component.ITriggerListener, Component.ICollisionListener
 {
+	//Property for setting the price of a button
+	[Property] public int ButtonPrice { get; set; } = 0;
 
-	
 	[Property] public bool DropperButton { get; set; }  //if true, the button will be used to spawn a Dropper
 	[Property] public bool ConveyorButton { get; set; } //if true, the button will be used to spawn a Conveyor
 	[Property] public bool ProcessorButton { get; set; } //if true, the button will be used to CollectCash
@@ -32,6 +33,9 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 	//Dropper Properties
 	[Property] public Rotation DropperRotation { get; set; } = new Rotation( 0f, 0f, 1f, -0.00000004371139f );
 	[Property] public Vector3 DropperSpawnPos { get; set; } = new Vector3( 0f, 0f, 0f );
+	[Property] public int Value { get; set; } = 100;
+	[Property] public float DropFreq { get; set; } = 4f;
+
 
 	[Property] public Rotation WallRotation { get; set; } = new Rotation( 0f, 0f, 1f, -0.00000004371139f );
 	[Property] public Vector3 WallSpawnPos { get; set; } = new Vector3( 0f, 0f, 0f );
@@ -58,8 +62,7 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 
 
 
-	//Property for setting the price of a button
-	[Property] public int ButtonPrice { get; set; } = 0;
+
 
 	//Property for setting the text of a button
 	[Property] public string ButtonText { get; set; } = string.Empty;
@@ -224,7 +227,7 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 		//add modelrenderer component
 		var model = dropper.Components.Create<ModelRenderer>();
 		model.Model = Model.Load( "models/dropper.vmdl" );
-		model.Tint= new Color( 0.36f, 0.06f, 0.06f );
+		model.Tint= new Color( 0.49f, 0.75f, 1.00f );
 
 		//should encapsulate all collider building in one function.
 		//add a Box Collider
@@ -248,7 +251,9 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 		nozzleCollider.Center = new Vector3( -33f, 0f, 42.5f );
 
 		//attach Dropper component
-		dropper.Components.Create<Dropper>();
+		var DropperComponent = dropper.Components.Create<Dropper>();
+		DropperComponent.DropRate = DropFreq;
+		DropperComponent.ProductValue = Value;
 
 		Log.Info( "Dropper Spawned at {spawnPosition}" );
 
@@ -280,7 +285,7 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 		//add modelrenderer component
 		var model = conveyor.Components.Create<ModelRenderer>();
 		model.Model = Model.Load( "models/conveyor.vmdl" );
-		model.Tint = new Color( 186, 88, 64 );
+		//model.Tint = new Color( 186, 88, 64 );
 		
 
 		//should encapsulate all collider building in one function.
@@ -338,7 +343,7 @@ public class ButtonComponent : Component, Component.ITriggerListener, Component.
 		//add modelrenderer
 		var model = processor.Components.Create<ModelRenderer>();
 		model.Model = Model.Load( "models/processor.vmdl" );
-		//model.Tint = new Color( 0, 0, 1 );
+		model.Tint = new Color( 0.24f, 0.10f, 0.10f );
 
 		//should encapsulate all collider building in one function.
 		//add a solid colliders

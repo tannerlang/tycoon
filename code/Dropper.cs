@@ -7,6 +7,8 @@ public sealed class Dropper : Component
 	//debug property to visualize the collider
 	[Property] public bool DrawDebugLines { get; set; } = false;
 
+	[Property] public int ProductValue { get; set; } = 100;
+
 
 	private TimeSince lastDrop = 0;
 
@@ -45,7 +47,7 @@ public sealed class Dropper : Component
 
 		//creating the model
 		var model = product.Components.Create<ModelRenderer>();
-		model.Model = Model.Load( "models/dev/box.vmdl" );
+		model.Model = Model.Load( "models/dev/sphere.vmdl" );
 
 		//create collider, necessary to add physics 
 		var collider = product.Components.Create<BoxCollider>();
@@ -56,9 +58,13 @@ public sealed class Dropper : Component
 		rigidBody.Gravity = true;
 
 		//attach product component
-		product.Components.Create<Product>();
+		var ProductComponent = product.Components.Create<Product>();
+		ProductComponent.Value = ProductValue;
+
 
 		Log.Info( "Product Dropped at ${spawnPosition}" );
+
+		
 	}
 
 	public void SetDebugLines()
