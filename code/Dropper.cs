@@ -53,9 +53,9 @@ public sealed class Dropper : Component
 		var collider = product.Components.Create<BoxCollider>();
 
 		//create rigid body for gravity and interactions with other objects physics.
-		var rigidBody = product.Components.Create<Rigidbody>();
+		/*var rigidBody = product.Components.Create<Rigidbody>();
 		rigidBody.MotionEnabled = true;
-		rigidBody.Gravity = true;
+		rigidBody.Gravity = true;*/
 
 		//attach product component
 		var ProductComponent = product.Components.Create<Product>();

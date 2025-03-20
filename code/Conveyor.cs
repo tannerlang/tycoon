@@ -6,9 +6,11 @@ namespace Sandbox
 
 	public sealed class Conveyor : Component, Component.ITriggerListener
 	{
-		
 
-		
+		private class ProductData
+		{ 
+		}
+
 		[Property] public float Speed { get; set; } = 50f;
 		[Property] public Vector3 Direction { get; set; } = Vector3.Left;
 
@@ -48,6 +50,7 @@ namespace Sandbox
 
 			}
 		}
+
 
 
 
