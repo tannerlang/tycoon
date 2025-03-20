@@ -23,45 +23,11 @@ namespace Sandbox
 		private static Dictionary<Rigidbody, Conveyor> activeConveyors = new();
 		
 
-		//Attemp to improve performance with a new method for products
-		private class ProductData
-		{
-			public Vector3 Position;
-			public string ProductType;
-			public GameObject VisualObject;
-			public float TimeRemaining;
-		}
-
-		private List<ProductData> fakeProducts = new();
-		[Property] public Model FakeProductModel { get; set; }
-
-
 
 
 		protected override void OnUpdate()
 		{
 
-			for ( int i = fakeProducts.Count - 1; i >= 0; i-- )
-			{
-				var product = fakeProducts[i];
-
-				//move fake product along conveyor
-				product.VisualObject.WorldPosition = Vector3.Lerp( product.VisualObject.WorldPosition, product.Position, 10f * Time.Delta );
-				if ( product.VisualObject != null )
-				{
-					product.VisualObject.WorldPosition = product.Position;
-				}
-
-				//if product reaches the processor remove it from the list
-				product.TimeRemaining -= Time.Delta;
-				if ( product.TimeRemaining <= 0 )
-				{
-					ProcessProduct( product );
-					product.VisualObject?.Destroy();
-					fakeProducts.RemoveAt( i );
-				}
-
-			}
 
 			//move Items on conveyor
 			foreach ( var rigidBody in objectsOnConveyor )
@@ -83,26 +49,7 @@ namespace Sandbox
 			}
 		}
 
-		public void AddProduct( string productType, float travelTime )
-		{
-			GameObject visualProduct = new GameObject();
-			visualProduct.WorldPosition = GameObject.WorldPosition + Vector3.Up * 5f;
-			var modelRenderer = visualProduct.Components.Create<ModelRenderer>();
-			modelRenderer.Model = FakeProductModel;
 
-			fakeProducts.Add( new ProductData
-			{
-				Position = visualProduct.WorldPosition,
-				ProductType = productType,
-				VisualObject = visualProduct,
-				TimeRemaining = travelTime
-			} );
-		}
-
-		private void ProcessProduct( ProductData product )
-		{
-			//grant money, link with processor?
-		}
 
 
 		public void SetDebugLines()
