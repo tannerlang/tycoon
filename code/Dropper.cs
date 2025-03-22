@@ -3,12 +3,8 @@ using Sandbox;
 public sealed class Dropper : Component
 {
 	[Property] public float DropRate { get; set; } = 4f;
-
-	//debug property to visualize the collider
-	[Property] public bool DrawDebugLines { get; set; } = false;
-
+	[Property] public bool DrawDebugLines { get; set; } = false;   
 	[Property] public int ProductValue { get; set; } = 100;
-
 
 	private TimeSince lastDrop = 0;
 
@@ -18,7 +14,7 @@ public sealed class Dropper : Component
 	}
 	protected override void OnUpdate()
 	{
-		if ( lastDrop > +DropRate )
+		if ( lastDrop >= DropRate )
 		{
 			spawnProduct();
 			lastDrop = 0;
@@ -45,26 +41,18 @@ public sealed class Dropper : Component
 		product.WorldScale = new Vector3( 0.1f, 0.1f, 0.1f );
 		product.Name = "Dropped Product";
 
-		//creating the model
+		//Create the Model
 		var model = product.Components.Create<ModelRenderer>();
-		model.Model = Model.Load( "models/dev/sphere.vmdl" );
+		model.Model = Model.Load( "models/dev/box.vmdl" );
 
-		//create collider, necessary to add physics 
+		//Attach collider
 		var collider = product.Components.Create<BoxCollider>();
 
-		//create rigid body for gravity and interactions with other objects physics.
-		/*var rigidBody = product.Components.Create<Rigidbody>();
-		rigidBody.MotionEnabled = true;
-		rigidBody.Gravity = true;*/
-
-		//attach product component
+		//Attach product component
 		var ProductComponent = product.Components.Create<Product>();
 		ProductComponent.Value = ProductValue;
 
-
-		Log.Info( "Product Dropped at ${spawnPosition}" );
-
-		
+		Log.Info( "Product Dropped at ${spawnPosition}" );		
 	}
 
 	public void SetDebugLines()

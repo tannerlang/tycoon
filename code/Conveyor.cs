@@ -7,50 +7,56 @@ namespace Sandbox
 	public sealed class Conveyor : Component, Component.ITriggerListener
 	{
 
-		private class ProductData
-		{ 
-		}
-
 		[Property] public float Speed { get; set; } = 50f;
 		[Property] public Vector3 Direction { get; set; } = Vector3.Left;
-
-		//debug property to visualize the collider
-		[Property] public bool DrawDebugLines { get; set; } = false;
+		[Property] public bool DrawDebugLines { get; set; } = false;     //debug property to visualize the collider
 
 		//Store objects on the Conveyor
-		private HashSet<Rigidbody> objectsOnConveyor = new HashSet<Rigidbody>();
-		private HashSet<Rigidbody> transitioningObjects = new HashSet<Rigidbody>();
+		private HashSet<Product> objectsOnConveyor = new HashSet<Product>();
+		private HashSet<Product> transitioningObjects = new HashSet<Product>();
 
-		//create a dictionary for keeping track of if objects were on another conveyor
-		private static Dictionary<Rigidbody, Conveyor> activeConveyors = new();
 		
-
-
-
 		protected override void OnUpdate()
-		{
-
-
-			//move Items on conveyor
-			foreach ( var rigidBody in objectsOnConveyor )
+		{	
+			//Handles Movement.
+			foreach ( var product in objectsOnConveyor )
 			{
-				//rigidBody.Velocity = Direction.Normal * Speed;
-				if ( !transitioningObjects.Contains( rigidBody ) )
+				if ( !transitioningObjects.Contains( product ) )
 				{
-					rigidBody.Velocity = Direction.Normal * Speed;
+					product.WorldPosition += Direction.Normal * Speed * Time.Delta;		//Update WorldPosition (Move Product)
 				}
-				
 			}
-
-
-			//Draw Debug for collider
+			//Conveyor Collider Debug Lines
 			if ( DrawDebugLines )
 			{
-				SetDebugLines();
-
+				SetDebugLines();    //Draw Debug for collider
 			}
 		}
 
+
+		public void OnTriggerEnter( Collider other )
+		{
+			//Log.Info( $"{other.GameObject.Name} entered the conveyor." );		//Log report that there is a gameObject on the coveyor.
+
+			//get the object on the conveyors Product Component
+			var product = other.GameObject.GetComponent<Product>();
+			if ( product != null )
+			{
+				objectsOnConveyor.Add( product ); //Add the product to the objectsOnConveyor set.
+				product.initializeProduct( Direction.Normal );		//initializeProduct
+			}
+		}
+
+		public void OnTriggerExit( Collider other )
+		{
+			var product = other.GameObject.GetComponent<Product>();
+
+			if ( product != null )
+			{
+				objectsOnConveyor.Remove( product );	//Remove product from the set
+			}
+			//Log.Info( $"{other.GameObject.Name} left the conveyor" );			//Report that Object has left the conveyor.
+		}
 
 
 
@@ -68,91 +74,5 @@ namespace Sandbox
 				Gizmo.Draw.LineBBox( new BBox( mins, maxs ) );
 			}
 		}
-
-		public void OnTriggerEnter( Collider other )
-		{
-			//Log report that there is a gameObject on the coveyor.
-			//Log.Info( $"{other.GameObject.Name} entered the conveyor." );
-
-			//get the object on the conveyors PhysicsBody component
-			var rigidBody = other.GameObject.GetComponent<Rigidbody>();
-
-			if ( rigidBody != null )
-			{
-				objectsOnConveyor.Add( rigidBody ); //add object on conveyor to conveyor list.
-
-				//blend direction of product if transitioning from another conveyor
-				//check if object was already on another conveyor.
-				if ( activeConveyors.TryGetValue( rigidBody, out Conveyor prevConveyor ) && prevConveyor != this )
-				{
-
-					// Blend transition between conveyors
-					Vector3 transitionDirection = (Direction.Normal + prevConveyor.Direction.Normal).Normal;
-					Vector3 targetVelocity = transitionDirection * Speed;
-
-					//gradually change velocity.
-					SmoothTransition( rigidBody, prevConveyor.Direction.Normal * prevConveyor.Speed, Direction.Normal * Speed );
-				}
-				else
-				{
-					//normal movmement
-					rigidBody.Velocity = Direction.Normal*Speed;
-				}
-
-				//delay between reference switch
-				DelayConveyorSwitch( rigidBody );
-			}
-		}
-
-		public void OnTriggerExit( Collider other )
-		{
-			var rigidBody = other.GameObject.GetComponent<Rigidbody>();
-
-			if ( rigidBody != null )
-			{
-				objectsOnConveyor.Remove( rigidBody );	//remove object from the list.
-			}
-
-			//Report that Object has left the conveyor.
-			//Log.Info( $"{other.GameObject.Name} left the conveyor" );
-			
-		}
-
-		async void SmoothTransition( Rigidbody rigidBody, Vector3 initVelocity, Vector3 targetVelocity )
-		{
-			float transitionTime = 10f;
-			float elapsedTime = 0f;
-
-
-			//Log.Info( $"Starting SmoothTransition: {initVelocity} → {targetVelocity} over {transitionTime}s" );
-			transitioningObjects.Add(rigidBody);
-
-			while ( elapsedTime < transitionTime )
-			{
-
-				await GameTask.Yield();
-
-				float t = elapsedTime / transitionTime; //normalize to 0-1 range
-
-				//interpolate between old direction and new direction
-
-				rigidBody.Velocity = Vector3.Lerp( initVelocity, targetVelocity, t );
-				elapsedTime += Time.Delta;  //time since last frame
-				//Log.Info( $"Transitioning... t={t}, Velocity={rigidBody.Velocity}" );
-
-			}
-
-			rigidBody.Velocity = targetVelocity;
-			transitioningObjects.Remove( rigidBody );
-			//Log.Info( $"SmoothTransition complete. Final Velocity: {rigidBody.Velocity}" );
-		}
-
-
-		async void DelayConveyorSwitch( Rigidbody rigidbody )
-		{
-			await GameTask.Yield();	//waits until next frame
-			activeConveyors[rigidbody] = this;
-		}
-
 	}
 }

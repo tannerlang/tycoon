@@ -13,12 +13,7 @@ public sealed class Product : Component
 	{
 		Log.Info( $"Prodcut Dropped with value: {Value}" );
 	}
-	protected override void OnAwake()
-	{
-		/*How do i access the conveyor the product is currently on and link its direction with the direction of the convey?*/
-		//direction = GetAllconveyorDirection;
-		isMoving = true;
-	}
+
 	protected override void OnUpdate()
 	{
 		if ( isMoving )
@@ -27,6 +22,22 @@ public sealed class Product : Component
 			WorldPosition += direction * MoveSpeed * Time.Delta;
 		}
 	}
+
+	//To be called when in Conveyor.OnTriggerEnter();
+	public void initializeProduct( Vector3 conveyorDirection )
+	{
+		direction = conveyorDirection;
+		bool isMoving = true;
+	}
+
+	protected override void OnAwake()
+	{
+		
+	}
+
+	
+
+
 
 
 }
