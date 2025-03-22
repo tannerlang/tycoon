@@ -5,6 +5,7 @@ public sealed class Dropper : Component
 	[Property] public float DropRate { get; set; } = 4f;
 	[Property] public bool DrawDebugLines { get; set; } = false;   
 	[Property] public int ProductValue { get; set; } = 100;
+	[Property] public Conveyor TargetConveyor { get; set; }			//This should always be the conveyor that is directly under the dropper.
 
 	private TimeSince lastDrop = 0;
 
@@ -32,7 +33,6 @@ public sealed class Dropper : Component
 	{
 		// Define the local position of the nozzle relative to the dropper
 		Vector3 localNozzlePosition = new Vector3( -33f, 0f, 35f );
-
 		// Convert local nozzle position to world position using the dropper's transform
 		Vector3 spawnPosition = GameObject.WorldTransform.ToWorld(new Transform( localNozzlePosition )).Position;
 
@@ -51,6 +51,16 @@ public sealed class Dropper : Component
 		//Attach product component
 		var ProductComponent = product.Components.Create<Product>();
 		ProductComponent.Value = ProductValue;
+
+		//Get the TargetConveyor's direction and z level.
+		if ( TargetConveyor != null )
+		{
+			ProductComponent.InitializeProduct( TargetConveyor.Direction.Normal, TargetConveyor.GameObject.WorldPosition.z );
+		}
+		else
+		{
+			Log.Warning( "Dropper has no TargetConveyor Assigned." );
+		}
 
 		Log.Info( "Product Dropped at ${spawnPosition}" );		
 	}

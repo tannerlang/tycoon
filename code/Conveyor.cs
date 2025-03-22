@@ -18,21 +18,13 @@ namespace Sandbox
 		
 		protected override void OnUpdate()
 		{	
-			//Handles Movement.
-			foreach ( var product in objectsOnConveyor )
-			{
-				if ( !transitioningObjects.Contains( product ) )
-				{
-					product.WorldPosition += Direction.Normal * Speed * Time.Delta;		//Update WorldPosition (Move Product)
-				}
-			}
+		
 			//Conveyor Collider Debug Lines
 			if ( DrawDebugLines )
 			{
 				SetDebugLines();    //Draw Debug for collider
 			}
 		}
-
 
 		public void OnTriggerEnter( Collider other )
 		{
@@ -43,7 +35,7 @@ namespace Sandbox
 			if ( product != null )
 			{
 				objectsOnConveyor.Add( product ); //Add the product to the objectsOnConveyor set.
-				product.initializeProduct( Direction.Normal );		//initializeProduct
+				//product.InitializeProduct( Direction.Normal );		//initializeProduct
 			}
 		}
 
@@ -57,9 +49,6 @@ namespace Sandbox
 			}
 			//Log.Info( $"{other.GameObject.Name} left the conveyor" );			//Report that Object has left the conveyor.
 		}
-
-
-
 
 		public void SetDebugLines()
 		{
