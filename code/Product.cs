@@ -52,7 +52,7 @@ public sealed class Product : Component
 	{
 		direction = conveyorDirection;
 		startZ = WorldPosition.z;
-		targetZ = conveyorZ;
+		targetZ = conveyorZ + 3.445f;		//3.445 is the visual offset for the product to be sitting on top of the conveyor.
 		isFalling = true;
 		isMoving = false;
 		fallTimer = 0f;
